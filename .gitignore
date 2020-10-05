@@ -1,0 +1,8 @@
+# ignore aws creds/kubeconfig
+aws-config
+kubeconfig*
+
+# ignore tfstate
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup

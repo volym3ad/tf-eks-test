@@ -1,0 +1,30 @@
+controller:
+  service:
+    enabled: true
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
+      service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: 'true'
+      service.beta.kubernetes.io/aws-load-balancer-type: nlb
+
+    enableHttp: true
+    enableHttps: true
+
+    ports:
+      http: 80
+      https: 443
+
+    targetPorts:
+      http: http
+      https: https
+
+    type: LoadBalancer
+
+    internal:
+      enabled: true
+      annotations:
+        service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
+        service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: 'true'
+        service.beta.kubernetes.io/aws-load-balancer-internal: "true"
+        service.beta.kubernetes.io/aws-load-balancer-type: nlb
+      externalTrafficPolicy: Local
+    
