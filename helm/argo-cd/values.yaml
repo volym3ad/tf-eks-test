@@ -1,0 +1,131 @@
+nameOverride: argocd
+
+installCRDs: true
+
+global:
+  image:
+    repository: argoproj/argocd
+    tag: v1.7.7
+    imagePullPolicy: IfNotPresent
+
+
+controller:
+  name: application-controller
+  image:
+    repository: argoproj/argocd
+    tag: v1.7.7
+    imagePullPolicy: IfNotPresent
+  args:
+    statusProcessors: "20"
+    operationProcessors: "10"
+    appResyncPeriod: "180"
+
+  serviceAccount:
+    create: true
+
+  clusterAdminAccess:
+    enabled: true
+
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+
+
+dex:
+  enabled: false
+
+
+redis:
+  enabled: true
+  name: redis
+  image:
+    repository: redis
+    tag: 5.0.9
+
+
+repoServer:
+  name: repo-server  
+  replicas: 1
+  image:
+    repository: argoproj/argocd
+    tag: v1.7.7
+
+  resources:
+    limits:
+      cpu: 50m
+      memory: 128Mi
+    requests:
+      cpu: 10m
+      memory: 64Mi
+
+
+server:
+  name: server
+  replicas: 1
+
+  image:
+    repository: argoproj/argocd
+    tag: v1.7.7
+
+  extraArgs:
+    - --insecure
+
+  serviceAccount:
+    create: true
+
+  ingress:
+    enabled: true
+    hosts:
+      - argocd.test
+
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
+
+  config:
+    url: http://argocd.test
+    admin.enabled: "false"
+    repositories: |
+      - url: https://github.com/volym3ad/tf-eks-test
+    repository.credentials: |
+      - url: https://github.com/volym3ad
+        passwordSecret:
+          name: github-argocd-token
+          key: password
+        usernameSecret:
+          name: github-argocd-token
+          key: username
+
+  rbacConfig:
+    policy.default: role:admin
+
+  clusterAdminAccess:
+    enabled: true
+
+  additionalApplications:
+    - name: ingress-nginx
+      namespace: infrastructure
+      project: default
+      source:
+        repoURL: https://github.com/volym3ad/tf-eks-test
+        targetRevision: HEAD
+        path: helm/ingress-nginx
+        helm:
+          version: v3
+          releaseName: ingress-nginx
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: infrastructure
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        validate: false

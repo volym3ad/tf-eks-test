@@ -1,6 +1,6 @@
 # tf-eks-test
 
-Task to bootstrap EKS cluster with helm chart inside.
+Task to bootstrap EKS cluster with ArgoCD inside to deploy ingress-nginx.
 
 ## Components
 
@@ -8,6 +8,14 @@ Task to bootstrap EKS cluster with helm chart inside.
 - EKS
 - K8S namespace
 - nginx-ingress with private loadbalancer deployed in created namespace
+
+## How to run
+
+```
+terraform apply -var github_argocd_token=<token>
+```
+
+where **token** is github token with repo scope.
 
 ## Results
 
