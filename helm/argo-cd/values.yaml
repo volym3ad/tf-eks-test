@@ -95,6 +95,9 @@ server:
     admin.enabled: "false"
     repositories: |
       - url: https://github.com/volym3ad/tf-eks-test
+      - type: helm
+        url: https://kubernetes.github.io/ingress-nginx
+        name: ingress-nginx
     repository.credentials: |
       - url: https://github.com/volym3ad
         passwordSecret:
